@@ -60,6 +60,23 @@ function drawPixelPlayer(point, team, label) {
   context.fillStyle = '#102b25'; context.font = 'bold 8px Trebuchet MS'; context.textAlign = 'center'; context.fillText(label, point.x, point.y + 3); context.textAlign = 'left';
 }
 
+function drawAimDots(start, end, width, height) {
+  const control = { x: (start.x + end.x) / 2, y: Math.min(start.y, end.y) - Math.min(110, height * .22) };
+  const dotCount = 18;
+  for (let index = 0; index < dotCount; index += 1) {
+    const progress = (index + 1) / (dotCount + 1);
+    const inverse = 1 - progress;
+    const point = {
+      x: inverse * inverse * start.x + 2 * inverse * progress * control.x + progress * progress * end.x,
+      y: inverse * inverse * start.y + 2 * inverse * progress * control.y + progress * progress * end.y
+    };
+    const radius = 7 - progress * 5.5;
+    context.beginPath(); context.arc(point.x, point.y, radius, 0, Math.PI * 2);
+    context.fillStyle = state.charging ? `rgba(247, 199, 107, ${.95 - progress * .3})` : `rgba(243, 114, 59, ${.9 - progress * .35})`;
+    context.fill();
+  }
+}
+
 function draw() {
   const width = canvas.clientWidth; const height = canvas.clientHeight;
   const fieldGradient = context.createLinearGradient(0, 0, width, height);
@@ -67,7 +84,7 @@ function draw() {
   context.clearRect(0, 0, width, height); context.fillStyle = fieldGradient; context.fillRect(0, 0, width, height); drawFieldLines(width, height); drawRoute(width, height);
   const quarterback = fieldPoint(player); const target = state.ball ? state.ball : fieldPoint(receiver);
   const pointer = state.pointer.x ? state.pointer : { x: target.x, y: target.y };
-  context.setLineDash([7, 8]); context.strokeStyle = state.charging ? '#f7c76b' : '#f3723b'; context.lineWidth = 2; context.beginPath(); context.moveTo(quarterback.x, quarterback.y); context.lineTo(pointer.x, pointer.y); context.stroke(); context.setLineDash([]);
+  drawAimDots(quarterback, pointer, width, height);
   if (state.charging) { context.beginPath(); context.arc(quarterback.x, quarterback.y, 25 + state.power / 3, 0, Math.PI * 2); context.strokeStyle = 'rgba(247,199,107,.55)'; context.stroke(); }
   defenders.forEach((defender, index) => drawPixelPlayer(fieldPoint(defender), 'defense', String(index + 20)));
   drawPixelPlayer(fieldPoint(receiver), 'offense', 'M'); drawPixelPlayer(quarterback, 'offense', 'QB');

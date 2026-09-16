@@ -4,56 +4,64 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <!-- CHANGE THIS. It is the name on the browser tab, and it is what Google shows. -->
-  <title>Wesley Mitchell — what you build Test</title>
-
-  <!-- CHANGE THIS TOO. One sentence. It is what shows under your link when someone shares it. -->
-  <meta name="description" content="One sentence about who you are and what you make.">
-
+  <title>Sunday Drive | Football Passing Drill</title>
+  <meta name="description" content="A mouse-controlled two-dimensional American football passing game.">
   <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
+  <main class="game-shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">WEEK 04 / QB ROOM</p>
+        <h1>Sunday Drive</h1>
+      </div>
+      <div class="drive-status" aria-live="polite">
+        <span class="status-dot"></span>
+        <span id="driveStatus">DRIVE LIVE</span>
+      </div>
+    </header>
 
-  <header>
-    <!-- Exactly ONE h1 on the page. It is your name. -->
-    <h1>Wesley Mitchell - Try Here FIRST</h1>
-    <p class="tagline">One line: what you do, and who it is for.</p>
-  </header>
-
-  <main>
-
-    <section>
-      <h2>What I am working on</h2>
-      <ul>
-        <li><strong>Making a new game.</strong> I am making a game where a dot has to dodge obstacles.</li>
-        <li><strong>Make this super hard.</strong> These obstacles can move, and if the dot is touched by an obstacle, it dissolves.</li>
-      </ul>
+    <section class="score-strip" aria-label="Game stats">
+      <div><span class="stat-label">QUARTER</span><strong>Q4</strong></div>
+      <div><span class="stat-label">DOWN</span><strong id="downValue">1st &amp; 10</strong></div>
+      <div><span class="stat-label">BALL ON</span><strong id="yardValue">OWN 32</strong></div>
+      <div class="score-box"><span class="stat-label">SCORE</span><strong><span id="scoreValue">14</span> <small>—
+            17</small></strong></div>
     </section>
 
-    <section>
-      <h2>What I am learning</h2>
-      <p>
-        I am learning how to 
-      </p>
+    <section class="play-card">
+      <div class="play-heading">
+        <div>
+          <p class="eyebrow">PLAY 08 / GUN RIGHT</p>
+          <h2>Thread the needle.</h2>
+        </div>
+        <button id="resetButton" class="reset-button" type="button">Reset drive</button>
+      </div>
+      <div class="field-wrap">
+        <canvas id="field"
+          aria-label="Football field. Move your pointer to aim, then press and hold to charge a throw."></canvas>
+        <div class="canvas-hint" id="canvasHint">WASD MOVE <span>•</span> MOVE TO AIM <span>•</span> HOLD TO LOAD
+          <span>•</span> RELEASE TO THROW
+        </div>
+      </div>
+      <div class="controls-row">
+        <div class="power-readout">
+          <div class="meter-label"><span>THROW POWER</span><strong id="powerValue">0%</strong></div>
+          <div class="meter"><span id="powerMeter"></span></div>
+        </div>
+        <div class="target-readout"><span class="target-icon">◉</span><span><b id="targetName">MALIK</b><small>Deep out
+              • 18 yds</small></span></div>
+      </div>
     </section>
 
-    <section>
-      <h2>Get in touch</h2>
-      <!--
-        Put an email you will still control after graduation. If you only have the school one
-        today, that is fine — put it in, and change it later. That is what commits are for.
-      -->
-      <p><a href="mailto:you@example.com">you@example.com</a></p>
-    </section>
-
+    <footer class="game-footer">
+      <p id="playMessage">Your receiver is breaking toward the right hash.</p>
+      <div class="legend"><span><i class="legend-dot receiver"></i>RECEIVER</span><span><i
+            class="legend-dot defender"></i>DEFENDER</span><span><i class="legend-dot aim"></i>AIM LINE</span></div>
+    </footer>
   </main>
-
-  <footer>
-    <p>Built by hand. Last updated <!-- change this when you change the page --> August 2026.</p>
-  </footer>
-
+  <script src="app.js"></script>
 </body>
 
 </html>

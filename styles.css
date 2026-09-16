@@ -1,77 +1,345 @@
-/* ============================================================
-   styles.css — this is YOURS to change. That is the point.
-   Every value below is a decision somebody made. Change one,
-   commit, and look at what happened.
-   ============================================================ */
-
-/* The custom properties. Change a colour ONCE here and it
-   changes everywhere it is used further down. */
 :root {
-  --ink:        #1a1a1a;   /* body text */
-  --muted:      #5a6472;   /* quieter text */
-  --accent:     #0a6373;   /* links and rules — make this yours */
-  --paper:      #ffffff;
-  --line:       #e2e6ec;
-  --measure:    34rem;     /* how wide a line of text gets before it wraps */
+  --ink: #f6f4ed;
+  --muted: #9ca49c;
+  --line: #2c3935;
+  --orange: #f3723b;
+  --green: #123d35;
+  --deep: #0b211e;
+  --field: #1c5a43;
 }
 
-/* A sensible reset. Without border-box, padding makes boxes
-   wider than you asked for, and nothing lines up. */
-*, *::before, *::after { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
 body {
-  margin: 0 auto;
-  padding: 3rem 1.25rem 4rem;
-  max-width: var(--measure);
-  background: var(--paper);
+  margin: 0;
+  min-height: 100vh;
+  background: #081714;
   color: var(--ink);
-  font: 1rem/1.65 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-family: "Trebuchet MS", Verdana, sans-serif;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: .18;
+  background-image: linear-gradient(115deg, transparent 0 48%, #d8ac74 49% 50%, transparent 51%), linear-gradient(25deg, transparent 0 48%, #d8ac74 49% 50%, transparent 51%);
+  background-size: 140px 140px;
+}
+
+.game-shell {
+  width: min(1100px, calc(100% - 36px));
+  margin: 0 auto;
+  padding: 44px 0 34px;
+  position: relative;
+}
+
+.topbar,
+.score-strip,
+.play-heading,
+.controls-row,
+.game-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.topbar {
+  margin-bottom: 27px;
+}
+
+.eyebrow,
+.stat-label,
+.legend,
+.drive-status,
+.canvas-hint,
+.meter-label {
+  letter-spacing: .14em;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.eyebrow {
+  color: var(--orange);
+  margin: 0 0 7px;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
 }
 
 h1 {
-  margin: 0;
-  font-size: 2.15rem;
-  line-height: 1.15;
-  letter-spacing: -0.02em;
-}
-
-.tagline {
-  margin: 0.5rem 0 0;
-  color: var(--muted);
-  font-size: 1.05rem;
+  font-family: Georgia, serif;
+  font-size: clamp(2.4rem, 6vw, 4.2rem);
+  font-weight: 400;
+  line-height: .95;
+  letter-spacing: -.05em;
 }
 
 h2 {
-  margin: 2.75rem 0 0.75rem;
-  padding-bottom: 0.4rem;
-  border-bottom: 1px solid var(--line);
-  font-size: 0.82rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--accent);
+  font-family: Georgia, serif;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 400;
 }
 
-ul { margin: 0; padding-left: 1.1rem; }
-li { margin-bottom: 0.6rem; }
-
-a {
-  color: var(--accent);
-  text-underline-offset: 3px;
+.drive-status {
+  color: #83c7a3;
+  display: flex;
+  align-items: center;
+  gap: 9px;
 }
-a:hover { text-decoration: none; }
 
-footer {
-  margin-top: 3.5rem;
-  padding-top: 1rem;
+.status-dot {
+  width: 7px;
+  height: 7px;
+  background: #83c7a3;
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px rgba(131, 199, 163, .12);
+}
+
+.score-strip {
   border-top: 1px solid var(--line);
-  color: var(--muted);
-  font-size: 0.85rem;
+  border-bottom: 1px solid var(--line);
+  min-height: 76px;
+  padding: 0 24px;
+  gap: 25px;
 }
 
-/* Someone reading this on a phone is the common case, not the
-   edge case. Test it there before you call the page done. */
-@media (max-width: 30rem) {
-  body { padding-top: 2rem; }
-  h1   { font-size: 1.8rem; }
+.score-strip>div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.stat-label {
+  color: var(--muted);
+}
+
+.score-strip strong {
+  font-size: 16px;
+}
+
+.score-box {
+  margin-left: auto;
+  text-align: right;
+}
+
+.score-box strong {
+  font-family: Georgia, serif;
+  font-size: 27px;
+  color: var(--orange);
+}
+
+.score-box small {
+  color: var(--ink);
+  font-size: 15px;
+}
+
+.play-card {
+  background: #102d27;
+  border: 1px solid #2e5146;
+  margin-top: 28px;
+  padding: 24px;
+  box-shadow: 0 22px 70px rgba(0, 0, 0, .22);
+}
+
+.play-heading {
+  margin-bottom: 18px;
+}
+
+.reset-button {
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid #385149;
+  padding: 10px 14px;
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.reset-button:hover {
+  border-color: var(--orange);
+  color: var(--ink);
+}
+
+.field-wrap {
+  position: relative;
+  background: var(--field);
+  border: 1px solid #4d8465;
+  overflow: hidden;
+}
+
+#field {
+  display: block;
+  width: 100%;
+  height: min(52vw, 470px);
+  min-height: 300px;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.canvas-hint {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(246, 244, 237, .7);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.canvas-hint span {
+  color: var(--orange);
+  padding: 0 8px;
+}
+
+.controls-row {
+  gap: 38px;
+  padding: 22px 4px 3px;
+}
+
+.power-readout {
+  flex: 1;
+}
+
+.meter-label {
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  margin-bottom: 9px;
+}
+
+.meter-label strong {
+  color: var(--orange);
+}
+
+.meter {
+  height: 5px;
+  background: #25463d;
+}
+
+.meter span {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--orange);
+  transition: width .05s linear;
+}
+
+.target-readout {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 150px;
+}
+
+.target-icon {
+  color: var(--orange);
+  font-size: 22px;
+}
+
+.target-readout b,
+.target-readout small {
+  display: block;
+}
+
+.target-readout b {
+  font-size: 12px;
+  letter-spacing: .1em;
+}
+
+.target-readout small {
+  color: var(--muted);
+  font-size: 11px;
+  margin-top: 3px;
+}
+
+.game-footer {
+  padding: 18px 3px 0;
+  color: var(--muted);
+  font-size: 13px;
+  gap: 20px;
+}
+
+.legend {
+  display: flex;
+  gap: 16px;
+  white-space: nowrap;
+}
+
+.legend-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+
+.receiver {
+  background: #f7c76b;
+}
+
+.defender {
+  background: #db5e51;
+}
+
+.aim {
+  background: var(--orange);
+}
+
+@media (max-width: 620px) {
+  .game-shell {
+    width: min(100% - 24px, 1100px);
+    padding-top: 25px;
+  }
+
+  .score-strip {
+    padding: 0 10px;
+    gap: 13px;
+  }
+
+  .score-strip strong {
+    font-size: 13px;
+  }
+
+  .score-box strong {
+    font-size: 21px;
+  }
+
+  .play-card {
+    padding: 14px;
+  }
+
+  .canvas-hint {
+    font-size: 8px;
+    top: 10px;
+  }
+
+  .canvas-hint span {
+    padding: 0 3px;
+  }
+
+  .controls-row,
+  .game-footer {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .power-readout {
+    width: 100%;
+  }
+
+  .target-readout {
+    min-width: 0;
+  }
+
+  .legend {
+    flex-wrap: wrap;
+  }
 }

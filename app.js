@@ -15,7 +15,21 @@ const player = { x: .12, y: .72 };
 const lineOfScrimmage = .3;
 const route = [{ x: .42, y: .7 }, { x: .55, y: .7 }, { x: .63, y: .48 }, { x: .78, y: .48 }, { x: .87, y: .3 }];
 const receiver = { ...route[0] };
-const defenders = [{ x: .59, y: .29, assignment: 'receiver' }, { x: .8, y: .51, assignment: 'deep' }, { x: .47, y: .57, assignment: 'inside' }];
+const offensiveLine = [
+  { x: .22, y: .58, label: 'LT' }, { x: .25, y: .65, label: 'LG' }, { x: .27, y: .72, label: 'C' },
+  { x: .25, y: .79, label: 'RG' }, { x: .22, y: .86, label: 'RT' }
+];
+const offensiveSupport = [
+  { x: .17, y: .58, label: 'TE' }, { x: .17, y: .86, label: 'RB' }, { x: .4, y: .2, label: 'WR' }, { x: .42, y: .88, label: 'WR' }
+];
+const defenders = [
+  { x: .34, y: .58, role: 'lineman', label: 'DL' }, { x: .34, y: .65, role: 'lineman', label: 'DL' },
+  { x: .34, y: .79, role: 'lineman', label: 'DL' }, { x: .34, y: .86, role: 'lineman', label: 'DL' },
+  { x: .47, y: .57, assignment: 'inside', role: 'linebacker', label: 'LB' }, { x: .47, y: .79, assignment: 'inside', role: 'linebacker', label: 'LB' },
+  { x: .55, y: .7, assignment: 'receiver', role: 'linebacker', label: 'LB' }, { x: .67, y: .18, assignment: 'deep', role: 'corner', label: 'CB' },
+  { x: .8, y: .51, assignment: 'deep', role: 'corner', label: 'CB' }, { x: .84, y: .75, assignment: 'deep', role: 'safety', label: 'S' },
+  { x: .91, y: .15, assignment: 'deep', role: 'safety', label: 'S' }
+];
 
 function resizeCanvas() {
   const ratio = window.devicePixelRatio || 1;
@@ -86,7 +100,9 @@ function draw() {
   const pointer = state.pointer.x ? state.pointer : { x: target.x, y: target.y };
   drawAimDots(quarterback, pointer, width, height);
   if (state.charging) { context.beginPath(); context.arc(quarterback.x, quarterback.y, 25 + state.power / 3, 0, Math.PI * 2); context.strokeStyle = 'rgba(247,199,107,.55)'; context.stroke(); }
-  defenders.forEach((defender, index) => drawPixelPlayer(fieldPoint(defender), 'defense', String(index + 20)));
+  offensiveLine.forEach((lineman) => drawPixelPlayer(fieldPoint(lineman), 'offense', lineman.label));
+  offensiveSupport.forEach((teammate) => drawPixelPlayer(fieldPoint(teammate), 'offense', teammate.label));
+  defenders.forEach((defender) => drawPixelPlayer(fieldPoint(defender), 'defense', defender.label));
   drawPixelPlayer(fieldPoint(receiver), 'offense', 'M'); drawPixelPlayer(quarterback, 'offense', 'QB');
   if (state.ball) {
     context.save(); context.shadowColor = 'rgba(255, 226, 147, .9)'; context.shadowBlur = 18;
@@ -107,14 +123,14 @@ function movePlayers(delta) {
     player.y = Math.max(.12, Math.min(.9, player.y + direction.y / length * delta * .3));
   }
   if (state.play !== 'thrown' && state.play !== 'intercepted' && state.routeSegment < route.length - 1) {
-    state.routeProgress = Math.min(1, state.routeProgress + delta * .24);
+    state.routeProgress = Math.min(1, state.routeProgress + delta * .55);
     const start = route[state.routeSegment]; const end = route[state.routeSegment + 1];
     receiver.x = start.x + (end.x - start.x) * state.routeProgress; receiver.y = start.y + (end.y - start.y) * state.routeProgress;
     if (state.routeProgress >= 1) { state.routeSegment += 1; state.routeProgress = 0; }
   }
   const coverSpeed = delta * .13;
   defenders.forEach((defender) => {
-    const target = defender.assignment === 'receiver' ? { x: receiver.x - .02, y: receiver.y + .04 } : defender.assignment === 'deep' ? { x: receiver.x + .08, y: receiver.y + .14 } : { x: receiver.x - .12, y: receiver.y + .2 };
+    const target = defender.role === 'lineman' ? { x: .34, y: defender.y } : defender.assignment === 'receiver' ? { x: receiver.x - .02, y: receiver.y + .04 } : defender.assignment === 'deep' ? { x: receiver.x + .08, y: receiver.y + .14 } : { x: receiver.x - .12, y: receiver.y + .2 };
     defender.x += Math.max(-coverSpeed, Math.min(coverSpeed, target.x - defender.x));
     defender.y += Math.max(-coverSpeed, Math.min(coverSpeed, target.y - defender.y));
   });
@@ -129,7 +145,10 @@ function throwBall() {
 }
 function resetRoute() {
   state.routeSegment = 0; state.routeProgress = 0; receiver.x = route[0].x; receiver.y = route[0].y;
-  defenders[0].x = .59; defenders[0].y = .29; defenders[1].x = .8; defenders[1].y = .51; defenders[2].x = .47; defenders[2].y = .57;
+  const startingPositions = [
+    [.34, .58], [.34, .65], [.34, .79], [.34, .86], [.47, .57], [.47, .79], [.55, .7], [.67, .18], [.8, .51], [.84, .75], [.91, .15]
+  ];
+  defenders.forEach((defender, index) => { defender.x = startingPositions[index][0]; defender.y = startingPositions[index][1]; });
 }
 function animateBall() { if (!state.ball) return; const ball = state.ball; ball.progress = Math.min(1, ball.progress + .025); const start = fieldPoint(player); ball.x = start.x + (ball.targetX - start.x) * ball.progress; ball.y = start.y + (ball.targetY - start.y) * ball.progress - Math.sin(ball.progress * Math.PI) * 75;
   const interceptor = defenders.find((defender) => Math.hypot(ball.x - fieldPoint(defender).x, ball.y - fieldPoint(defender).y) < 24);
